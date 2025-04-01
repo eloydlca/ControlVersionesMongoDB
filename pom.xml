@@ -21,5 +21,12 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- driver mongoDB -->
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongodb-driver-sync</artifactId>
+      <version>5.4.0</version>
+    </dependency>
   </dependencies>
 </project>
