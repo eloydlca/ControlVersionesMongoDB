@@ -2,14 +2,21 @@ package org.example.model;
 
 import org.bson.types.ObjectId;
 
-public class File {
+public class UserFile {
     private ObjectId id;
     private String fileName;
     private String fileExtension;
     private Version[] versions;
 
-    public File(String fileName, String fileExtension, Version[] versions) {
+    public UserFile(String fileName, String fileExtension, Version[] versions) {
         this.id = new ObjectId();
+        this.fileName = fileName;
+        this.fileExtension = fileExtension;
+        this.versions = versions;
+    }
+
+    public UserFile(ObjectId id, String fileName, String fileExtension, Version[] versions) {
+        this.id = id;
         this.fileName = fileName;
         this.fileExtension = fileExtension;
         this.versions = versions;

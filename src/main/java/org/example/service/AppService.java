@@ -1,7 +1,7 @@
 package org.example.service;
 
-import org.example.dao.TerminalUI;
-import org.example.ui.MongoDAO;
+import org.example.ui.TerminalUI;
+import org.example.dao.MongoDAO;
 
 public class AppService {
     TerminalUI terminalUI;

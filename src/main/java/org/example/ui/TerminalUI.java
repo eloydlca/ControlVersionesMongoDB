@@ -1,4 +1,4 @@
-package org.example.dao;
+package org.example.ui;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;

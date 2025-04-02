@@ -1,13 +1,13 @@
 package org.example;
 
-import org.example.dao.TerminalUI;
+import org.example.ui.TerminalUI;
 import org.example.service.AppService;
-import org.example.ui.MongoDAO;
+import org.example.dao.MongoDAO;
 
 public class Main {
     public static void main(String[] args) {
-        TerminalUI terminalUI = new TerminalUI();
         MongoDAO mongoDAO = new MongoDAO();
+        TerminalUI terminalUI = new TerminalUI();
 
         AppService appService = new AppService(terminalUI, mongoDAO);
 
