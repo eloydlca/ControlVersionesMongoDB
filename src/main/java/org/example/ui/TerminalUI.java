@@ -1,6 +1,10 @@
 package org.example.ui;
 
+import org.example.model.UserFile;
+import org.example.model.Version;
+
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class TerminalUI {
@@ -38,6 +42,77 @@ public class TerminalUI {
     }
 
 
+    //vistas genericas
+
+    //metodo para mostrar mensajes genericos
+    public void showMessage(String message) {
+        System.out.println(message);
+    }
+
+    public void listFiles(List<UserFile> files) {
+        System.out.println("Lista de ficheros");
+
+        int index = 1;
+
+        for (UserFile file : files) {
+            System.out.println("[" + index + "]" + file.getFileName());
+            index++;
+        }
+    }
+
+    public int chooseFile(int max) {
+        int choice = 0;
+        boolean valid = false;
+        while (!valid) {
+            System.out.print("Elige el número del fichero (1-" + max + "): ");
+            try {
+                choice = sc.nextInt();
+                if (choice >= 1 && choice <= max) {
+                    valid = true;
+                } else {
+                    System.out.println("Por favor, ingresa un número entre 1 y " + max + ".");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada no válida. Por favor, ingresa un número.");
+                sc.next(); // Limpiar la entrada errónea
+            }
+        }
+        return choice;
+    }
+
+
+    public void listVersions(UserFile file) {
+        System.out.println("Versiones del fichero " + file.getFileName() + ":");
+        Version[] versions = file.getVersions();
+        if (versions.length == 0) {
+            System.out.println("No se encontraron versiones.");
+        } else {
+            for (Version version : versions) {
+                System.out.println("Versión: " + version.getVersion());
+            }
+        }
+    }
+
+    public int chooseVersion(int max) {
+        int choice = 0;
+        boolean valid = false;
+        while (!valid) {
+            System.out.print("Elige el número de la versión (1-" + max + "): ");
+            try {
+                choice = sc.nextInt();
+                if (choice >= 1 && choice <= max) {
+                    valid = true;
+                } else {
+                    System.out.println("Por favor, ingresa un número entre 1 y " + max + ".");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada no válida. Por favor, ingresa un número.");
+                sc.next(); // Limpiar la entrada errónea
+            }
+        }
+        return choice;
+    }
+
 
     // vistas de la opcion de Guardar
     // vistas de la opcion de Recuperar
@@ -67,6 +142,24 @@ public class TerminalUI {
             }
         }
         return op;
+    }
+
+    public boolean confirmDeletion(String fileName) {
+        System.out.println("Para confirmar la eliminación, escribe el nombre del fichero (" + fileName + "): ");
+
+        String input = sc.next();
+        return input.equals(fileName);
+    }
+
+    /*
+        Cambiar esto a que, para eliminar una version, en lugar de poner "SI"
+        se deba poner explicitamente la version que se esta borrando, similar
+        al metodo de confirmDeletion(), pero solamente con la version
+     */
+    public boolean confirmDeletionVersion(String fileName, float version) {
+        System.out.println("Para confirmar la eliminación de la versión " + version + " del fichero " + fileName + ", escribe 'SI': ");
+        String input = sc.next();
+        return input.equalsIgnoreCase("SI");
     }
 
     // vistas de la opcion de Salir
