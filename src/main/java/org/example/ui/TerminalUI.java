@@ -38,9 +38,10 @@ public class TerminalUI {
     }
 
 
-    public void exit() {
-        System.out.println("¡Nos vemos pronto!");
-    }
+
+    // vistas de la opcion de Guardar
+    // vistas de la opcion de Recuperar
+    // vistas de la opcion de Borrar
 
     public int deleteOptions() {
         int op = 0;
@@ -66,6 +67,11 @@ public class TerminalUI {
             }
         }
         return op;
+    }
+
+    // vistas de la opcion de Salir
+    public void exit() {
+        System.out.println("¡Nos vemos pronto!");
     }
 
 }

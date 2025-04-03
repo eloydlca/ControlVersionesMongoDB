@@ -19,32 +19,33 @@ public class AppService {
             op = terminalUI.showMenu();
             switch (op) {
                 case 1:
-                    saveDocument(terminalUI);
+                    saveDocument();
                     break;
                 case 2:
-                    obtainDocument(terminalUI);
+                    obtainDocument();
                     break;
                 case 3:
-                    deleteDocument(terminalUI);
+                    deleteDocument();
                     break;
                 case 4:
-                    exitProgram(terminalUI);
+                    exitProgram();
                     return;
             }
         } while (true);
     }
 
-    private void saveDocument(TerminalUI terminalUI) {
+    private void saveDocument() {
+
     }
 
-    private void obtainDocument(TerminalUI terminalUI) {
+    private void obtainDocument() {
     }
 
-    private void deleteDocument(TerminalUI terminalUI) {
+    private void deleteDocument() {
         int op = terminalUI.deleteOptions();
     }
 
-    private void exitProgram(TerminalUI terminalUI) {
+    private void exitProgram() {
         terminalUI.exit();
     }
 }
