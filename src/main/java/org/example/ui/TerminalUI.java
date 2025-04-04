@@ -3,6 +3,7 @@ package org.example.ui;
 import org.example.model.UserFile;
 import org.example.model.Version;
 
+import java.io.File;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -115,6 +116,91 @@ public class TerminalUI {
 
 
     // vistas de la opcion de Guardar
+
+    public String writeFilePath() {
+        System.out.println("Introduce la ruta absoluta del fichero.");
+        sc.nextLine();
+        return sc.nextLine();
+    }
+
+    public void incorrectPath() {
+        System.out.println("Error: ruta incorrecta, el archivo no existe.");
+    }
+
+    public String showSaveOptionsFileExist(String fileName) {
+        while (true) {
+            try {
+                String menu = "Ya existe un fichero " +  fileName +" en la base de datos.\n" +
+                        "[1] Añadr nueva version.\n" +
+                        "[2] Sobreescribir el fichero guardado.\n"+
+                        "[3] Cancelar.\n";
+
+                System.out.println(menu);
+                int value = sc.nextInt();
+
+                if (value == 1) {
+                    return "NEW_VERSION";
+                } else if (value == 2) {
+                    return "OVERWRITE";
+                } else if (value == 3) {
+                    return "CANCEL";
+                } else {
+                    System.out.println("¡Opción inválida! Introduce un número entre 1 y 3.");
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada no válida. Por favor, introduce un número.");
+                sc.next();
+            }
+
+        }
+    }
+
+    public String showNewVersionDescriptionOption() {
+        while (true) {
+            System.out.println("Añade una pequeña descripcion del guardado.");
+            try {
+                sc.next();
+                return sc.nextLine();
+            } catch (InputMismatchException e) {
+                sc.next();
+                System.out.println("Introduce una descripcion valida");
+            }
+        }
+    }
+
+    public float showNewVersionVersionOption() {
+        while (true) {
+
+            System.out.println("Añade la version inicial del archivo");
+            try {
+                return sc.nextFloat();
+            } catch (InputMismatchException e) {
+                sc.next();
+                System.out.println("introduce un valor valido ej: 1.0");
+            }
+        }
+    }
+
+    public boolean confirmOverWriteFile(UserFile file) {
+        System.out.println("Quieres sobreescribir el fichero? " + file.getFileName() + "." + file.getFileExtension());
+        System.out.println("[1] si");
+        System.out.println("[2] no");
+        while (true) {
+            try {
+                int input =  sc.nextInt();
+
+                if (input == 2 || input == 1) {
+                    return input == 1;
+                }
+
+                System.out.println("Escribe un valor valido entre 1 o 2");
+            } catch (InputMismatchException e) {
+                sc.next();
+                System.out.println("introduce un valor valido ej: 1.0");
+            }
+        }
+    }
+
     // vistas de la opcion de Recuperar
 
     public String askRecoveryPath() {

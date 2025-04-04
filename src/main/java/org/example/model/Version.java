@@ -6,11 +6,13 @@ import org.bson.types.ObjectId;
 public class Version {
 
     private float version;
+    private String versionDescription;
     private Binary data;
 
-    public Version(float version, byte[] data) {
+    public Version(float version, String versionDescription, Binary data) {
         this.version = version;
-        this.data = new Binary(data);
+        this.versionDescription = versionDescription;
+        this.data = data;
     }
 
     public float getVersion() {
@@ -21,11 +23,19 @@ public class Version {
         this.version = version;
     }
 
+    public String getVersionDescription() {
+        return versionDescription;
+    }
+
+    public void setVersionDescription(String versionDescription) {
+        this.versionDescription = versionDescription;
+    }
+
     public Binary getData() {
         return data;
     }
 
-    public void setData(byte[] data) {
-        this.data = new Binary(data);
+    public void setData(Binary data) {
+        this.data = data;
     }
 }

@@ -55,22 +55,22 @@ public class MongoDAO implements IMongoDAO {
     public void saveFile(UserFile file) {
         MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
 
-        // Convertir `File` a `Document`
         Document fileDoc = new Document()
                 .append("_id", file.getId())
                 .append("fileName", file.getFileName())
                 .append("fileExtension", file.getFileExtension());
 
-        // Convertir `Versions[]` a `Document[]`
-        Document[] versionsArray = new Document[file.getVersions().length];
-        for (int i = 0; i < file.getVersions().length; i++) {
-            versionsArray[i] = new Document()
-                    .append("version", file.getVersions()[i].getVersion())
-                    .append("data", file.getVersions()[i].getData());
+        // Usar List<Document> en lugar de Document[]
+        List<Document> versionsList = new ArrayList<>();
+        for (Version version : file.getVersions()) {
+            versionsList.add(new Document()
+                    .append("version", version.getVersion())
+                    .append("versionDescription", version.getVersionDescription())
+                    .append("data", version.getData())
+            );
         }
-        fileDoc.append("versions", versionsArray);
+        fileDoc.append("versions", versionsList);  // <- Cambio clave
 
-        // Insertar en MongoDB
         collection.insertOne(fileDoc);
     }
 
@@ -81,6 +81,7 @@ public class MongoDAO implements IMongoDAO {
         // Crear documento de la nueva versión
         Document newVersionDoc = new Document()
                 .append("version", newVersion.getVersion())
+                .append("versionDescription", newVersion.getVersionDescription())
                 .append("data", newVersion.getData());
 
         // Agregar la nueva versión al array sin
@@ -107,8 +108,9 @@ public class MongoDAO implements IMongoDAO {
             Version[] versions = new Version[versionsDocs.size()];
             for (int i = 0; i < versionsDocs.size(); i++) {
                 float versionNumber = versionsDocs.get(i).getDouble("version").floatValue();
-                byte[] data = versionsDocs.get(i).get("data", Binary.class).getData();
-                versions[i] = new Version(versionNumber, data);
+                String versionDescription = versionsDocs.get(i).getString("versionDescription");
+                Binary data = versionsDocs.get(i).get("data", Binary.class);
+                versions[i] = new Version(versionNumber, versionDescription, data);
             }
 
             filesList.add(new UserFile(id, fileName, fileExtension, versions));
@@ -136,35 +138,71 @@ public class MongoDAO implements IMongoDAO {
         Version[] versions = new Version[versionsDocs.size()];
         for (int i = 0; i < versionsDocs.size(); i++) {
             float versionNumber = versionsDocs.get(i).getDouble("version").floatValue();
-            byte[] data = versionsDocs.get(i).get("data", Binary.class).getData();
-            versions[i] = new Version(versionNumber, data);
+            String versionDescription = versionsDocs.get(i).getString("versionDescription");
+            Binary data = versionsDocs.get(i).get("data", Binary.class);
+            versions[i] = new Version(versionNumber, versionDescription, data);
         }
 
         return new UserFile(id, fileName, fileExtension, versions);
     }
 
     @Override
+    public UserFile getFileByFileNameAndExtension(String fileName, String fileExtension) {
+        MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
+
+        // Crear un filtro para verificar si existe un archivo con el nombre y la extensión proporcionados
+        Document filtro = new Document("fileName", fileName)
+                .append("fileExtension", fileExtension);
+
+        // Intentamos encontrar el primer archivo que coincida con el filtro
+        Document archivoDoc = collection.find(filtro).first();
+
+        // Si no encontramos el archivo, retorna null. Si lo encontramos, lo convierte en un objeto UserFile
+        if (archivoDoc == null) {
+            return null;
+        }
+
+        // Convertir `Document` a `UserFile`
+        ObjectId id = archivoDoc.getObjectId("_id");
+        String fileNameResult = archivoDoc.getString("fileName");
+        String fileExtensionResult = archivoDoc.getString("fileExtension");
+
+        // Obtener las versiones
+        List<Document> versionsDocs = archivoDoc.getList("versions", Document.class);
+        Version[] versions = new Version[versionsDocs.size()];
+        for (int i = 0; i < versionsDocs.size(); i++) {
+            float versionNumber = versionsDocs.get(i).getDouble("version").floatValue();
+            String versionDescription = versionsDocs.get(i).getString("versionDescription");
+            Binary data = versionsDocs.get(i).get("data", Binary.class);
+            versions[i] = new Version(versionNumber, versionDescription, data);
+        }
+
+        return new UserFile(id, fileNameResult, fileExtensionResult, versions);
+    }
+
+    @Override
     public void updateFile(UserFile file) {
         MongoCollection<Document> collection = database.getCollection(COLLECTION_NAME);
 
-        // Crear lista de versiones actualizadas
-        Document[] versionsArray = new Document[file.getVersions().length];
-        for (int i = 0; i < file.getVersions().length; i++) {
-            versionsArray[i] = new Document()
-                    .append("version", file.getVersions()[i].getVersion())
-                    .append("data", file.getVersions()[i].getData());
+        // Corregido: Usar List<Document>
+        List<Document> versionsList = new ArrayList<>();
+        for (Version version : file.getVersions()) {
+            versionsList.add(new Document()
+                    .append("version", version.getVersion())
+                    .append("versionDescription", version.getVersionDescription())
+                    .append("data", version.getData())
+            );
         }
 
-        // Crear documento de actualización
         Document updatedData = new Document()
                 .append("fileName", file.getFileName())
                 .append("fileExtension", file.getFileExtension())
-                .append("versions", versionsArray);
+                .append("versions", versionsList);  // <- Cambio clave
 
-        // Aplicar actualización
-        collection.updateOne(Filters.eq("_id", new ObjectId(file.getId().toString())), new Document("$set", updatedData));
-
-        System.out.println("Archivo actualizado correctamente.");
+        collection.updateOne(
+                Filters.eq("_id", file.getId()),
+                new Document("$set", updatedData)
+        );
     }
 
     @Override

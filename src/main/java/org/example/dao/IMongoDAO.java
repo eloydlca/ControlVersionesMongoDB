@@ -10,6 +10,7 @@ public interface IMongoDAO {
     void saveFile(UserFile file);
     List<UserFile> getAllFiles();
     UserFile getFileById(ObjectId id);
+    UserFile getFileByFileNameAndExtension(String fileName, String fileExtension);
     void updateFile(UserFile file);
     long deleteFile(ObjectId id);
     void addVersionToFile(ObjectId fileId, Version newVersion);
