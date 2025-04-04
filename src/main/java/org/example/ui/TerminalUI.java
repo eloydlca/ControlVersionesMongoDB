@@ -116,6 +116,19 @@ public class TerminalUI {
 
     // vistas de la opcion de Guardar
     // vistas de la opcion de Recuperar
+
+    public String askRecoveryPath() {
+        System.out.println("Introduce la ruta completa donde deseas recuperar el fichero (incluyendo nombre y extensión):");
+        return sc.next();
+    }
+
+    public boolean confirmOverwrite(String filePath) {
+        System.out.println("Ya existe un fichero en la ruta " + filePath + ". ¿Deseas sobreescribirlo? (SI/NO):");
+        String input = sc.next();
+        return input.equalsIgnoreCase("SI");
+    }
+
+
     // vistas de la opcion de Borrar
 
     public int deleteOptions() {
@@ -151,16 +164,17 @@ public class TerminalUI {
         return input.equals(fileName);
     }
 
-    /*
-        Cambiar esto a que, para eliminar una version, en lugar de poner "SI"
-        se deba poner explicitamente la version que se esta borrando, similar
-        al metodo de confirmDeletion(), pero solamente con la version
-     */
     public boolean confirmDeletionVersion(String fileName, float version) {
-        System.out.println("Para confirmar la eliminación de la versión " + version + " del fichero " + fileName + ", escribe 'SI': ");
+        System.out.println("Para confirmar la eliminación de la versión " + version + " del fichero " + fileName + ", escribe la versión a eliminar: ");
         String input = sc.next();
-        return input.equalsIgnoreCase("SI");
+        try {
+            float inputVersion = Float.parseFloat(input);
+            return inputVersion == version;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
+
 
     // vistas de la opcion de Salir
     public void exit() {

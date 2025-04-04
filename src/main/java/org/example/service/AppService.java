@@ -5,6 +5,10 @@ import org.example.model.Version;
 import org.example.ui.TerminalUI;
 import org.example.dao.MongoDAO;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class AppService {
@@ -43,6 +47,37 @@ public class AppService {
     }
 
     private void obtainDocument() {
+        List<UserFile> files = mongoDAO.getAllFiles();
+        if (files.isEmpty()) {
+            terminalUI.showMessage("No hay ficheros guardados.");
+            return;
+        }
+
+        terminalUI.listFiles(files);
+        int fileChoice = terminalUI.chooseFile(files.size());
+        UserFile selectedFile = files.get(fileChoice - 1);
+
+        terminalUI.listVersions(selectedFile);
+        int versionChoice = terminalUI.chooseVersion(selectedFile.getVersions().length);
+        Version selectedVersion = selectedFile.getVersions()[versionChoice - 1];
+
+        String recoveryPath = terminalUI.askRecoveryPath();
+        Path path = Paths.get(recoveryPath);
+
+        if (Files.exists(path)) {
+            if (!terminalUI.confirmOverwrite(recoveryPath)) {
+                terminalUI.showMessage("Operación cancelada. No se recuperó el fichero.");
+                return;
+            }
+        }
+
+        try {
+            byte[] data = selectedVersion.getData().getData();
+            Files.write(path, data);
+            terminalUI.showMessage("Fichero recuperado con éxito en: " + recoveryPath);
+        } catch (IOException e) {
+            terminalUI.showMessage("Error al recuperar el fichero: " + e.getMessage());
+        }
     }
 
     private void deleteDocument() {
@@ -84,19 +119,10 @@ public class AppService {
                 return;
             }
 
-            /*  Revisar esto
-                Que pasa si no existe una version en un fichero
-                (no deberia pasar porque cuando se crea un fichero, se crea con una version)
-             */
             terminalUI.listVersions(selectedFile);
             int versionChoice = terminalUI.chooseVersion(versions.length);
             Version versionToDelete = versions[versionChoice - 1];
 
-            /*
-                Cambiar esto a que, para eliminar una version, en lugar de poner "SI"
-                se deba poner explicitamente la version que se esta borrando, similar
-                al metodo de confirmDeletion(), pero solamente con la version
-            */
             if (terminalUI.confirmDeletionVersion(selectedFile.getFileName(), versionToDelete.getVersion())) {
                 mongoDAO.removeVersionFromFile(selectedFile.getId(), versionToDelete.getVersion());
                 terminalUI.showMessage("Versión " + versionToDelete.getVersion() + " eliminada correctamente del fichero '" + selectedFile.getFileName() + "'.");
