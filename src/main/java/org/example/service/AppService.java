@@ -74,7 +74,7 @@ public class AppService {
                         // obtener la version mas reciente en base al atributo version (el mas grande)
                         Version lastVersion = Arrays.stream(userFileFromDB.getVersions()).max((v1,v2) -> Float.compare(v1.getVersion(), v2.getVersion())).orElse(null);
                         terminalUI.showMessage("Ultima version: " + lastVersion.getVersion());
-                        terminalUI.showMessage("Ultima version: " + lastVersion.getVersionDescription() + "\n");
+                        terminalUI.showMessage("Descripción de la version: " + lastVersion.getVersionDescription() + "\n");
 
                         String fileDescription = terminalUI.showNewVersionDescriptionOption();
                         float fileVersion = terminalUI.showNewVersionVersionOption();

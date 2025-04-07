@@ -137,7 +137,7 @@ public class TerminalUI {
 
                 System.out.println(menu);
                 int value = sc.nextInt();
-
+                sc.nextLine();
                 if (value == 1) {
                     return "NEW_VERSION";
                 } else if (value == 2) {
@@ -159,10 +159,8 @@ public class TerminalUI {
         while (true) {
             System.out.println("Añade una pequeña descripcion del guardado.");
             try {
-                sc.next();
                 return sc.nextLine();
             } catch (InputMismatchException e) {
-                sc.next();
                 System.out.println("Introduce una descripcion valida");
             }
         }
@@ -188,7 +186,7 @@ public class TerminalUI {
         while (true) {
             try {
                 int input =  sc.nextInt();
-
+                sc.nextLine();
                 if (input == 2 || input == 1) {
                     return input == 1;
                 }

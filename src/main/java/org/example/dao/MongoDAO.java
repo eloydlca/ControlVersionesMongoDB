@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MongoDAO implements IMongoDAO {
-    private static final String CONNECTION_STRING = "mongodb://localhost:27017";
+    private static final String CONNECTION_STRING = "mongodb://172.16.0.91:27017";
     private static final String DATABASE_NAME = "controlVersion";
     private static final String COLLECTION_NAME = "files";
 
